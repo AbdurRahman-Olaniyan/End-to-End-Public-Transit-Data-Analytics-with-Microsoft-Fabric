@@ -1,0 +1,6 @@
+CREATE SCHEMA control;
+GO
+CREATE SCHEMA silver;
+GO
+CREATE SCHEMA gold;
+GO
