@@ -39,9 +39,22 @@ The implementation uses a Fabric Lakehouse (`LH_MBTA`), Data Warehouse (`WH_MBTA
 
 5. **Create and run the transformations.** Run [`usp_merge_silver.sql`](sql/usp_merge_silver.sql) and [`usp_build_gold.sql`](sql/usp_build_gold.sql) in the Warehouse to create the stored procedures. Execute `silver.usp_merge_predictions` followed by `gold.usp_build_gold` to populate the reporting tables.
 
-6. **Set up repeat runs.** Create a Fabric Data Pipeline that runs prediction ingestion, the Silver merge, and the Gold build in that order. The workspace screenshots show a subsequent semantic model refresh activity. Configure the pipeline schedule to suit your ingestion frequency. The pipeline definition is not included as an exported file in this repository.
+6. **Set up repeat runs.** Create a Fabric Data Pipeline that runs prediction ingestion, the Silver merge, and the Gold build in that order. The workspace screenshots show a subsequent semantic model refresh activity. Configure the pipeline schedule to suit your ingestion frequency.
 
-7. **Build the report.** Create a Power BI semantic model from the Gold tables and build the predicted service performance report. The image below shows the report produced for this project; the editable Power BI file and model definition are not included in the repository.
+    Recreating the Pipeline
+
+    - Create a Data Pipeline in the Fabric workspace and name it `pl_mbta_predictions_etl`.
+    - Add a Notebook activity named `ingest_predictions` and select the `predictions_ingest_bronze` notebook.
+    - Add a stored procedure activity named `merge_predictions` and configure it to run `silver.usp_merge_predictions` in the Fabric Warehouse.
+    - Add another stored procedure activity named `build_gold` and configure it to run `gold.usp_build_gold`.
+    - Add the semantic model refresh activity for the report model. Connect the activities in the order shown in the pipeline screenshot, then run the pipeline and inspect its activity results.
+
+7. **Build the report.** Create a Power BI semantic model from the Gold tables and build the predicted service performance report.
+      The Power BI semantic model uses a star schema, with `fact_predictions` connected to `dim_route`, `dim_stop`, `dim_trip`, and `dim_date` through their corresponding keys. Each dimension has a one-to-many relationship with the fact table, allowing the report to filter prediction records by route, stop, trip, and date.
+
+      Create the relationships shown below. Set the relationship cardinality to one-to-many, with single-direction filtering from each dimension to the fact table. Create the DAX measures needed for the report in a separate `_measures` table.
+
+![Power BI Semantic Model](docs/powerbi_semantic_model.png)
 
 ## Pipeline Execution
 
@@ -55,7 +68,7 @@ The pipeline runs the ingestion and transformation stages in sequence. The SQL p
 
 ![MBTA Red Line predicted service performance](docs/Predicted_Service_Perfomance.png)
 
-The report presents revenue-service prediction counts, predicted on-time rates, average predicted delay, delay distribution, and station-level comparisons. The screenshot is included to show the reporting result rather than as an exported report file.
+The report presents revenue-service prediction counts, predicted on-time rates, average predicted delay, delay distribution, and station-level comparisons. 
 
 ## Implementation Documentation
 
@@ -66,4 +79,4 @@ The notebooks and stored procedures have separate technical notes for readers wh
 - [Silver merge procedure](docs/usp_merge_silver_README.md)
 - [Gold build procedure](docs/usp_build_gold_README.md)
 
-The notebooks and SQL scripts are available under [`notebooks/`](notebooks/) and [`sql/`](sql/). A detailed step-by-step walkthrough will be covered separately.
+The notebooks and SQL scripts are available under [`notebooks/`](notebooks/) and [`sql/`](sql/).
