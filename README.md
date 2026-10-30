@@ -1,12 +1,12 @@
 # MBTA Red Line Prediction Analytics with Microsoft Fabric
 
-This project builds an incremental data pipeline for MBTA Red Line predictions using Microsoft Fabric. It retrieves prediction and reference data from the MBTA V3 API, stores source records in a Lakehouse, transforms them in a Fabric Data Warehouse, and uses Power BI to report predicted service performance. The pipeline is designed to run repeatedly as new prediction data becomes available.
+This project builds an incremental data pipeline for Massachusetts Bay Transportation Authority (MBTA) Red Line predictions using Microsoft Fabric. It retrieves prediction and reference data from the MBTA V3 API, stores source records in a Lakehouse, transforms them in a Fabric Data Warehouse, and uses Power BI to report predicted service performance. The pipeline is designed to run repeatedly as new prediction data becomes available.
 
 **Data source:** [MBTA V3 API](https://api-v3.mbta.com/)
 
 ## Project Objective
 
-The project provides a way to examine predicted delays, on-time performance, and differences between stations and departure hours. Instead of reviewing individual predictions from the API, the data is prepared for analysis in Power BI.
+The project provides a way to examine predicted delays, on-time performance, and differences between stations and departure hours.
 
 ## Pipeline Architecture
 
@@ -39,7 +39,7 @@ The implementation uses a Fabric Lakehouse (`LH_MBTA`), Data Warehouse (`WH_MBTA
 
 5. **Create and run the transformations.** Run [`usp_merge_silver.sql`](sql/usp_merge_silver.sql) and [`usp_build_gold.sql`](sql/usp_build_gold.sql) in the Warehouse to create the stored procedures. Execute `silver.usp_merge_predictions` followed by `gold.usp_build_gold` to populate the reporting tables.
 
-6. **Set up repeat runs.** Create a Fabric Data Pipeline that runs prediction ingestion, the Silver merge, and the Gold build in that order. The workspace screenshots show a subsequent semantic model refresh activity. Configure the pipeline schedule to suit your ingestion frequency.
+6. **Set up repeat runs.** Create a Fabric Data Pipeline that runs prediction ingestion, the Silver merge, and the Gold build in that order. Configure the pipeline schedule to suit your ingestion frequency.
 
     Recreating the Pipeline
 
