@@ -70,6 +70,20 @@ The pipeline runs the ingestion and transformation stages in sequence. The SQL p
 
 The report presents revenue-service prediction counts, predicted on-time rates, average predicted delay, delay distribution, and station-level comparisons. 
 
+### SQL Analysis — Predicted Delays by Stop
+
+![MBTA Red Line Predicted Delays by Stop](docs/analysis_stop_delays.png)
+
+**Business Question:** Which MBTA Red Line stops have the highest percentage of predicted departures more than five minutes late?
+
+The Gold layer supports this analysis by joining `gold.fact_predictions` with `gold.dim_stop`. The query calculates the total number of valid predictions, the number and percentage of predictions exceeding five minutes of delay, and the average predicted delay for each stop.
+
+Results are sorted by the percentage of late predictions in descending order. Stops with fewer than 20 valid predictions are excluded.
+
+The analysis helps identify stops with higher predicted delay rates. These values reflect predicted departure times rather than confirmed train delays.
+
+[View SQL Query](sql/analysis_stop_delays.sql)
+
 ## Implementation Documentation
 
 The notebooks and stored procedures have separate technical notes for readers who want to examine the code:
